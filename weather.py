@@ -5,7 +5,7 @@ import geocoder
 import os
 
 load_dotenv(find_dotenv())
-g = geocoder.ip('me')
+address = geocoder.ip('me').address
 
 url = "https://api.openweathermap.org/data/2.5/weather?"
 
@@ -22,9 +22,9 @@ try:
             if len(sys.argv[2]) > 1:
                 city = sys.argv[2]
         except:
-            city = g.city + "," + g.state + "," + g.country
+            city = address
 except:
-    city = g.city + "," + g.state + "," + g.country
+    city = address
     units = "imperial"
 
 params = {"q": city, "units": units, "appid": os.getenv("APPID")}
