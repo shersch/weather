@@ -15,12 +15,15 @@ parser.add_argument("location", type=str, nargs="?", default=address)
 group = parser.add_mutually_exclusive_group(required=False)
 group.add_argument("-c", action="store_true")
 group.add_argument("-f", action="store_true")
+group.add_argument("-k", action="store_true")
 args = parser.parse_args()
 
 if args.c:
     units = "metric"
 elif args.f:
     units = "imperial"
+elif args.k:
+    units = "kelvin"
 else:
     units = os.getenv("DEF_UNITS")
 
