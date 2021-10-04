@@ -1,33 +1,30 @@
 from dotenv import load_dotenv, find_dotenv
 import requests
-import sys
 import geocoder
 import os
+import argparse
 
 load_dotenv(find_dotenv())
 address = geocoder.ip('me').address
 
 url = "https://api.openweathermap.org/data/2.5/weather?"
 
-try:
-    if len(sys.argv[1]) > 1:
-        city = sys.argv[1]
-        units = "imperial"
-    elif len(sys.argv[1]) == 1:
-        if sys.argv[1].lower() == "c":
-            units = "metric"
-        elif sys.argv[1].lower() == "f":
-            units = "imperial"
-        try:
-            if len(sys.argv[2]) > 1:
-                city = sys.argv[2]
-        except:
-            city = address
-except:
-    city = address
-    units = "imperial"
 
-params = {"q": city, "units": units, "appid": os.getenv("APPID")}
+parser = argparse.ArgumentParser()
+parser.add_argument("location", type=str, nargs="?", default=address)
+group = parser.add_mutually_exclusive_group(required=False)
+group.add_argument("-c", action="store_true")
+group.add_argument("-f", action="store_true")
+args = parser.parse_args()
+
+if args.c:
+    units = "metric"
+elif args.f:
+    units = "imperial"
+else:
+    units = os.getenv("DEF_UNITS")
+
+params = {"q": args.location, "units": units, "appid": os.getenv("APPID")}
 r1 = requests.get(url, params=params)
 temp = r1.json()['main']
 conditions = r1.json()['weather'][0]['description']
